@@ -23,8 +23,20 @@ namespace CoreWithReact.Controllers
         [HttpGet]
         public ActionResult GetSales()
         {
-            var findSales = db.Sales.Select(x => new { x.Id, x.ProductId, x.CustomerId, x.StoreId, x.DateSold }).ToList();
-            return Json(findSales);
+            var allSales = db.Sales.Join(db.Customer, s => s.CustomerId, c => c.Id,
+                (s, c) => new { s, c })
+                .Join(db.Store, s1 => s1.s.StoreId, st => st.Id,
+                (s1, st) => new {s1, st})
+                .Join(db.Product, s2 => s2.s1.s.ProductId, p => p.Id,
+                (s2, p) => new {
+                    ID = s2.s1.s.Id,
+                    ProductName = p.Name,
+                    CustomerName = s2.s1.c.Name,
+                    StoreName = s2.st.Name,
+                    DateSold = s2.s1.s.DateSold
+                });
+
+            return Json(allSales);
         }
 
         /// <summary>
@@ -66,6 +78,12 @@ namespace CoreWithReact.Controllers
             mySales.DateSold = dateSold;
             db.SaveChanges();
             return Json(db.Sales.Select(x => new { x.Id, x.ProductId, x.CustomerId, x.StoreId, x.DateSold }).ToList());
+        }
+
+        public ActionResult FindSales(int id)
+        {
+            var mySales = db.Sales.Find(id);
+            return Json(mySales);
         }
     }
 }

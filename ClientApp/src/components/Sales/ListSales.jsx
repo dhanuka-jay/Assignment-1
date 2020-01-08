@@ -4,12 +4,16 @@ export class ListSales extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            products: []
+            products: [],
+            
         }
+
+        this.FindSales = this.FindSales.bind(this);
     }
 
     componentDidMount() {
         this.props.getSales();
+
     }
 
     componentWillReceiveProps(nextProps) {
@@ -18,17 +22,22 @@ export class ListSales extends Component {
         }
     }
 
+    FindSales(id) {
+        this.props.findUpdateSales(id);
+        //console.log(id);
+    }
+
     render() {
         let tableData = null;
         if (this.state.data !== null && this.state.data !== undefined) {
             tableData = this.state.data.map(item =>
                 <tr key={item.id}>
-                    <td>{item.productId}</td>
-                    <td>{item.customerId}</td>
-                    <td>{item.storeId}</td>
+                    <td>{item.customerName}</td>
+                    <td>{item.productName}</td>
+                    <td>{item.storeName}</td>
                     <td>{item.dateSold}</td>
-                    <td><button className="small ui yellow button"><i className="edit icon"></i>Edit</button></td>
-                    <td><button className="small ui red button"><i className="trash icon"></i>Delete</button></td>
+                    <td><button className="small ui yellow button" onClick={() => this.FindSales(item.id)}><i className="edit icon"></i>Edit</button></td>
+                    <td><button className="small ui red button" onClick={() => this.props.loadDelete(item.id, item.customerName, item.productName, item.storeName, item.dateSold)}><i className="trash icon"></i>Delete</button></td>
                 </tr>
             );
             return (
@@ -37,8 +46,8 @@ export class ListSales extends Component {
                     <table className="table" aria-labelledby="tabelLabel">
                         <thead>
                             <tr>
-                                <td><b>Product</b></td>
                                 <td><b>Customer</b></td>
+                                <td><b>Product</b></td>
                                 <td><b>Store</b></td>
                                 <td><b>Date Sold</b></td>
                                 <td><b>Action</b></td>
@@ -58,6 +67,7 @@ export class ListSales extends Component {
             )
         }
     }
+      
 }
 
 export default ListSales;

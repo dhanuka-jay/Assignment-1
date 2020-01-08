@@ -1,20 +1,26 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.IO;
+using Microsoft.Extensions.Configuration;
 
 namespace CoreWithReact.Models
 {
     public partial class tempSchemaContext : DbContext
     {
+
         public tempSchemaContext()
         {
+
         }
+
 
         public tempSchemaContext(DbContextOptions<tempSchemaContext> options)
             : base(options)
         {
-        }
 
+        }
+        
         public virtual DbSet<Customer> Customer { get; set; }
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<Sales> Sales { get; set; }
@@ -24,12 +30,20 @@ namespace CoreWithReact.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=DHANUKA\\DB2019; Initial Catalog = tempSchema; Persist Security Info = True; User ID = sa; Password =$ids1111$$AA; MultipleActiveResultSets = True;");
-                //optionsBuilder.UseSqlServer("Server=tcp:dhanuka2019db.database.windows.net,1433;Initial Catalog=tempschema;Persist Security Info=False;User ID=tempschemadb;Password=$ids1111$$AA;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+               .SetBasePath(Directory.GetCurrentDirectory())
+               .AddJsonFile("appsettings.json")
+               .Build();
+                var connectionString = configuration.GetConnectionString("AzureDbConnection");
+                optionsBuilder.UseSqlServer(connectionString);
+                
+                /* -- Default Generated Code -- */
+                //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                //optionsBuilder.UseSqlServer("Server=tcp:dotnetcorewithreactdbserver.database.windows.net,1433;Initial Catalog=DotNetCoreWithReact_db;User Id=adminuser@dotnetcorewithreactdbserver;Password=$ids1111$$AA");
+                
             }
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Customer>(entity =>

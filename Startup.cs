@@ -24,26 +24,7 @@ namespace CoreWithReact
         {
 
             services.AddControllersWithViews();
-
-
-            //---------------------------
-
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
-                services.AddDbContext<tempSchemaContext>(options =>
-                        options.UseSqlServer(Configuration.GetConnectionString("MyDbConnection")));
-            else
-                services.AddDbContext<tempSchemaContext>(options =>
-                        options.UseSqlServer("Data Source=localdatabase.db"));
-
-            // Automatically perform database migration
-            services.BuildServiceProvider().GetService<tempSchemaContext>().Database.Migrate();
-
-            //---------------------------
-
-
-
-            //services.AddDbContext<tempSchemaContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
-
+            
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

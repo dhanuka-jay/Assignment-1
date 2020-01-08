@@ -30,16 +30,15 @@ const closebutton = {
     alignSelf: 'flex-end'
 };
 
-export class CreateSales extends Component {
+export class UpdateSales extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            productId: null,
             customerId: null,
+            productId: null,
             storeId: null,
             dateSold: null
         }
-
 
         this.mySubmitHandler = this.mySubmitHandler.bind(this);
         this.myChangeHadler = this.myChangeHadler.bind(this);
@@ -73,12 +72,18 @@ export class CreateSales extends Component {
     };
 
     mySubmitHandler(event) {
-        this.props.newSales(this.state.productId, this.state.customerId, this.state.storeId, this.state.dateSold);
+        this.props.editSales(this.props.salesUpdateData.id,
+            (this.state.productId == null) ? this.props.salesUpdateData.productId : this.state.productId,
+            (this.state.customerId == null) ? this.props.salesUpdateData.customerId : this.state.customerId,
+            (this.state.storeId == null) ? this.props.salesUpdateData.storeId : this.state.storeId,
+            (this.state.dateSold == null) ? this.props.salesUpdateData.dateSold : this.state.dateSold);
         this.props.backToList();
         event.preventDefault();
+
     };
 
     render() {
+
         let customerOptions = null;
         let productOptions = null;
         let storeOptions = null;
@@ -105,18 +110,18 @@ export class CreateSales extends Component {
             }));
         };
 
-
         return (
             <div className="ui clearing segment" style={boxmodel}>
                 <button style={closebutton} onClick={this.props.backToList}>X</button>
                 <form onSubmit={this.mySubmitHandler}>
                     <div>
-                        <h2> Create Sales </h2>
+                        <h2> Update Sales </h2>
                     </div>
                     <div>
                         <label>Customer</label>
                         <Dropdown
                             name='customerId'
+                            defaultValue={this.props.salesUpdateData.customerId}
                             placeholder='Select Customer'
                             onChange={this.myChangeHadler}
                             selection
@@ -128,6 +133,7 @@ export class CreateSales extends Component {
                         <label>Product</label>
                         <Dropdown
                             name='productId'
+                            defaultValue={this.props.salesUpdateData.productId}
                             placeholder='Select Product'
                             onChange={this.myChangeHadler}
                             selection
@@ -139,6 +145,7 @@ export class CreateSales extends Component {
                         <label>Store</label>
                         <Dropdown
                             name='storeId'
+                            defaultValue={this.props.salesUpdateData.storeId}
                             placeholder='Select Store'
                             onChange={this.myChangeHadler}
                             selection
@@ -148,10 +155,10 @@ export class CreateSales extends Component {
                     </div>
                     <div>
                         <label>Date Sold</label>
-                        <input type="date" name="dateSold" onChange={this.myChangeHadler} />
+                        <input type="text" name="dateSold" value={this.props.salesUpdateData.dateSold} onChange={this.myChangeHadler} />
                     </div>
                     <div>
-                        <button className="small ui right labeled icon right floated green button" type="submit"><i className="check icon"></i>Create</button>
+                        <button className="small ui right labeled icon right floated green button" type="submit"><i className="check icon"></i>Edit</button>
                     </div>
                     <div>
                         <button className="small ui right floated black button" onClick={this.props.backToList}>Cancel</button>
@@ -163,4 +170,4 @@ export class CreateSales extends Component {
 
 }
 
-export default CreateSales;
+export default UpdateSales;

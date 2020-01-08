@@ -4,11 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CoreWithReact.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CoreWithReact.Controllers
 {
     public class CustomerController : Controller
     {
+        
+
         private tempSchemaContext db = new tempSchemaContext();
 
         public IActionResult Index()

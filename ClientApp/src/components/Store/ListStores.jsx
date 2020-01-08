@@ -23,7 +23,7 @@ export class ListStores extends Component {
         let tableData = null;
         if (this.state.data !== null && this.state.data !== undefined) {
             tableData = this.state.data.map(item =>
-                <tr key={item.id}>
+                <tr key={item.id}> 
                     <td>{item.name}</td>
                     <td>{item.address}</td>
                     <td><button className="small ui yellow button" onClick={() => this.props.setEditDetails(item.id, item.name, item.address)}><i className="edit icon"></i>Edit</button></td>

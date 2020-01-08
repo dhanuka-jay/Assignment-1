@@ -2,10 +2,8 @@
 import $ from 'jquery';
 import ListSales from './ListSales';
 import CreateSales from './CreateSales';
-/*
 import DelSales from './DelSales';
 import UpdateSales from './UpdateSales';
-*/
 
 export class Sales extends Component {
     constructor(props) {
@@ -21,7 +19,9 @@ export class Sales extends Component {
                 productId: null,
                 customerId: null,
                 storeId: null,
-                dateSold: null
+                dateSold: null,
+
+                salesUpdateData: null
             }
         }
 
@@ -33,8 +33,11 @@ export class Sales extends Component {
         this.LoadCreate = this.LoadCreate.bind(this);
         this.LoadDelete = this.LoadDelete.bind(this);
         this.ConfirmDelete = this.ConfirmDelete.bind(this);
-        this.setEditDetails = this.setEditDetails.bind(this);
         this.BackToList = this.BackToList.bind(this);
+        this.GetCustomerList = this.GetCustomerList.bind(this);
+        this.GetProductList = this.GetProductList.bind(this);
+        this.GetStoreList = this.GetStoreList.bind(this);
+        this.FindUpdateSales = this.FindUpdateSales.bind(this);
     };
 
     /* Get the list of existing Sales data */
@@ -53,6 +56,7 @@ export class Sales extends Component {
             },
         });
     };
+
 
     /* Delete selected Sales.
        <ListSales> component will call this method when <Delete> button is clicked.
@@ -92,7 +96,7 @@ export class Sales extends Component {
         var self = this;
         $.ajax({
             type: 'POST',
-            url: `Sales/EditSales?id=${id}&productId=${productId}&customerId=${customerId}&storeId=${storeId}&dateSold=${dateSold}`,
+            url: `Sales/UpdateSales?id=${id}&productId=${productId}&customerId=${customerId}&storeId=${storeId}&dateSold=${dateSold}`,
             success: function (response) {
                 self.setState({ salesData: response });
             },
@@ -102,19 +106,76 @@ export class Sales extends Component {
         });
     };
 
-    setEditDetails(id, productId, customerId, storeId, dateSold) {
-        this.setState({ activeComponent: 'Update' });
-
-        this.setState({
-            salesToBeEdited: {
-                id: id,
-                productId: productId,
-                customerId: customerId,
-                storeId: storeId,
-                dateSold: dateSold
-            }
+    /*
+ * GetCustomerList, GetProductList, GetStoreList methods will be used to populate 'Customer', 'Product' and 'Store'
+ * dropdowns in Create and Update components.
+ */
+    GetCustomerList() {
+        var self = this;
+        $.ajax({
+            type: 'GET',
+            datatype: 'json',
+            url: '/Customer/GetCustomer',
+            success: function (response) {
+                self.setState({ customerData: response });
+            },
+            error: function (response) {
+                console.log("ajax call-GetCustomerList failed...!");
+            },
         });
-    }
+    };
+
+    //----------------------------
+
+    GetProductList() {
+        var self = this;
+        $.ajax({
+            type: 'GET',
+            datatype: 'json',
+            url: '/Product/GetProduct',
+            success: function (response) {
+                self.setState({ productData: response });
+            },
+            error: function (response) {
+                console.log("ajax call-GetProductList failed...!");
+            },
+        });
+    };
+
+    //----------------------------
+
+    GetStoreList() {
+        var self = this;
+        $.ajax({
+            type: 'GET',
+            datatype: 'json',
+            url: '/Store/GetStore',
+            success: function (response) {
+                self.setState({ storeData: response });
+            },
+            error: function (response) {
+                console.log("ajax call-GetStoreList failed...!");
+            },
+        });
+    };
+
+    FindUpdateSales(id) {
+        //console.log(id);
+        var self = this;
+        $.ajax({
+            type: 'GET',
+            datatype: 'json',
+            url: `Sales/FindSales?id=${id}`,
+            success: function (response) {
+                self.setState({ salesUpdateData: response });
+                //@@@@response verified
+                self.setState({ activeComponent: 'Update' });
+            },
+            error: function (response) {
+                console.log('ajax call-DeleteSales failed...!');
+            },
+        });
+    };
 
     LoadCreate() {
         this.setState({ activeComponent: 'Create' });
@@ -151,34 +212,44 @@ export class Sales extends Component {
                         <ListSales
                             getSales={this.GetSales}
                             data={this.state.salesData}
-                            setEditDetails={this.setEditDetails}
+                            findUpdateSales={this.FindUpdateSales}
                             loadCreate={this.LoadCreate}
                             loadDelete={this.LoadDelete}
                         />
                     </div>
                 )
-            /*
             case 'Update':
                 return (
                     <div>
                         <UpdateSales
+                            getCustomerList={this.GetCustomerList}
+                            getProductList={this.GetProductList}
+                            getStoreList={this.GetStoreList}
                             salesToBeEdited={this.state.salesToBeEdited}
+                            salesUpdateData={this.state.salesUpdateData}
+                            customerData={this.state.customerData}
+                            productData={this.state.productData}
+                            storeData={this.state.storeData}
                             editSales={this.EditSales}
                             backToList={this.BackToList}
                         />
                     </div>
                 )
-                */
             case 'Create':
                 return (
                     <div>
                         <CreateSales
+                            getCustomerList={this.GetCustomerList}
+                            getProductList={this.GetProductList}
+                            getStoreList={this.GetStoreList}
+                            customerData={this.state.customerData}
+                            productData={this.state.productData}
+                            storeData={this.state.storeData}
                             newSales={this.NewSales}
                             backToList={this.BackToList}
                         />
                     </div>
                 )
-            /*
             case 'Delete': {
                 return (
                     <div calss="ui modal">
@@ -191,7 +262,6 @@ export class Sales extends Component {
                     </div>
                 )
             }
-            */
             default:
                 return (
                     <div></div>
